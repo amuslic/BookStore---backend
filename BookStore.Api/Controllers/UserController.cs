@@ -74,7 +74,7 @@ namespace BookStoreApi.Controllers
         [SwaggerResponse(HttpStatusCode.NotFound, typeof(ErrorResponseModel), Description = "User with provided id was not found")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, typeof(ErrorResponseModel), Description = "Uknown error while trying to fetch users")]
         public async Task<ActionResult> GetUser(
-            string userId,
+            int userId,
             CancellationToken cancellationToken)
         {
 
@@ -84,12 +84,12 @@ namespace BookStoreApi.Controllers
             {
                 case OperationResult.Succeeded:
                     {
-                        var userModel = user.Adapt<UserModel>();
+                        var userModel = user.Response.Adapt<UserModel>();
                         return Ok(userModel);
                     }
                 case OperationResult.NotFound:
                     {
-                        return BadRequest("User with provided id was not found");
+                        return NotFound("User with provided id was not found");
                     }
                 default:
                     {

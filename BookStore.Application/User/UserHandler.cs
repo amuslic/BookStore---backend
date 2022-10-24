@@ -14,7 +14,7 @@ namespace BookStore.Application.User
         {
             _userRepository = userRepository;
         }
-        public Task<IOperationResponse<CreateUser?>> GetUser(string userId, CancellationToken cancellationToken)
+        public Task<IOperationResponse<CreateUser?>> GetUser(int userId, CancellationToken cancellationToken)
         {
             return _userRepository.GetUser(userId, cancellationToken);
         }

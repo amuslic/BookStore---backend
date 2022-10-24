@@ -9,6 +9,7 @@ using static BookStore.Domain.IOperationResponse;
 
 namespace BookStore.Infrastructure
 {
+    // todo - implement caching 
     internal class UserRepository : BaseRepository, IUserRepository
     {
         private readonly ILogger<UserRepository> _logger;
@@ -18,7 +19,7 @@ namespace BookStore.Infrastructure
             _logger = logger;
         }
 
-        public async Task<IOperationResponse<CreateUser?>> GetUser(string userId, CancellationToken cancellationToken)
+        public async Task<IOperationResponse<CreateUser?>> GetUser(int userId, CancellationToken cancellationToken)
         {
 
             _logger.LogInformation("Fetching user with id {userId}", userId);
@@ -67,6 +68,7 @@ namespace BookStore.Infrastructure
             {
                 var userEntity = createUser.Adapt<UserEntity>();
                 await _context.AddAsync(userEntity, cancellationToken);
+                _context.SaveChanges();
                 return OperationResult.Succeeded;
             }
             catch (Exception exception)
