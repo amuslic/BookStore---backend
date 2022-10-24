@@ -14,17 +14,17 @@ namespace BookStore.Application.User
         {
             _userRepository = userRepository;
         }
-        public Task<IOperationResponse<CreateUser?>> GetUser(int userId, CancellationToken cancellationToken)
+        public Task<IOperationResponse<DomainUser?>> GetUser(int userId, CancellationToken cancellationToken)
         {
             return _userRepository.GetUser(userId, cancellationToken);
         }
 
-        public Task<IOperationResponse<IEnumerable<CreateUser>>> GetUsers(int count, CancellationToken cancellationToken)
+        public Task<IOperationResponse<IEnumerable<DomainUser>>> GetUsers(int count, CancellationToken cancellationToken)
         {
             return _userRepository.GetUsers(count, cancellationToken);
         }
 
-        public Task<OperationResult> CreateUser(CreateUser createUser, CancellationToken cancellationToken)
+        public Task<OperationResult> CreateUser(DomainUser createUser, CancellationToken cancellationToken)
         {
             return _userRepository.CreateUser(createUser, cancellationToken);
         }

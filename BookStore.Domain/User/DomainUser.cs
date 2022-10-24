@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BookStore.Contracts.Models
+namespace BookStore.Domain.User
 {
-    public class UserCreateRequestModel
+    public class DomainUser
     {
         [Required]
         public string FirstName { get; set; } = string.Empty;

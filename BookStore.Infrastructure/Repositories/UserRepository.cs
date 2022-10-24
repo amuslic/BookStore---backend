@@ -19,7 +19,7 @@ namespace BookStore.Infrastructure
             _logger = logger;
         }
 
-        public async Task<IOperationResponse<CreateUser?>> GetUser(int userId, CancellationToken cancellationToken)
+        public async Task<IOperationResponse<DomainUser?>> GetUser(int userId, CancellationToken cancellationToken)
         {
 
             _logger.LogInformation("Fetching user with id {userId}", userId);
@@ -30,39 +30,39 @@ namespace BookStore.Infrastructure
                 if (user == null)
                 {
                     _logger.LogInformation("User with id {userId} not Found", userId);
-                    return OperationResponse.Error<CreateUser>(OperationResult.NotFound);
+                    return OperationResponse.Error<DomainUser>(OperationResult.NotFound);
                 }
 
-                return OperationResponse.Success(user.Adapt<CreateUser>());
+                return OperationResponse.Success(user.Adapt<DomainUser>());
             }
 
             catch (Exception exception)
             {
                 _logger.LogError(exception, "Error while fetching the user");
-                return OperationResponse.Error<CreateUser>(OperationResult.UnknownError);
+                return OperationResponse.Error<DomainUser>(OperationResult.UnknownError);
             }
         }
 
-        public async Task<IOperationResponse<IEnumerable<CreateUser>>?> GetUsers(int count, CancellationToken cancellationToken)
+        public async Task<IOperationResponse<IEnumerable<DomainUser>>?> GetUsers(int count, CancellationToken cancellationToken)
         {
             try
             {
                 var users = await _context.Users.Take(count)
-                    .ProjectToType<CreateUser>()
+                    .ProjectToType<DomainUser>()
                     .ToListAsync(cancellationToken: cancellationToken);
 
                 _logger.LogInformation("Returning {Count} users", users.Count);
 
-                return OperationResponse.Success<IReadOnlyList<CreateUser>>(users);
+                return OperationResponse.Success<IReadOnlyList<DomainUser>>(users);
             }
             catch (Exception exception)
             {
                 _logger.LogError(exception, "Error on permission listing");
-                return OperationResponse.Error<IReadOnlyList<CreateUser>>(OperationResult.UnknownError);
+                return OperationResponse.Error<IReadOnlyList<DomainUser>>(OperationResult.UnknownError);
             }
         }
 
-        public async Task<OperationResult> CreateUser(CreateUser createUser, CancellationToken cancellationToken)
+        public async Task<OperationResult> CreateUser(DomainUser createUser, CancellationToken cancellationToken)
         {
             try
             {

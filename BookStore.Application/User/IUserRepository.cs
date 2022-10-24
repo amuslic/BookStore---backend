@@ -6,9 +6,9 @@ namespace BookStore.Application.User
 {
     public interface IUserRepository
     {
-        Task<IOperationResponse<CreateUser?>> GetUser(int userId, CancellationToken cancellationToken);
-        Task<IOperationResponse<IEnumerable<CreateUser>>> GetUsers(int count, CancellationToken cancellationToken);
-        Task<OperationResult> CreateUser(CreateUser createUser, CancellationToken cancellationToken);
+        Task<IOperationResponse<DomainUser?>> GetUser(int userId, CancellationToken cancellationToken);
+        Task<IOperationResponse<IEnumerable<DomainUser>>> GetUsers(int count, CancellationToken cancellationToken);
+        Task<OperationResult> CreateUser(DomainUser createUser, CancellationToken cancellationToken);
         Task<OperationResult> UpdateUser(CancellationToken cancellationToken);
         Task<OperationResult> DeleteUser(string userId, CancellationToken cancellationToken);
     }

@@ -68,14 +68,14 @@ namespace BookStore.Infrastructure.Migrations
                     b.Property<DateTime>("RentedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("DomainUserId")
                         .HasColumnType("int");
 
                     b.HasKey("LoanId");
 
                     b.HasIndex("BookId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("DomainUserId");
 
                     b.ToTable("Loans");
                 });
@@ -97,25 +97,25 @@ namespace BookStore.Infrastructure.Migrations
                     b.Property<DateTime>("ReturnedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("DomainUserId")
                         .HasColumnType("int");
 
                     b.HasKey("LoanHistoryId");
 
                     b.HasIndex("BookId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("DomainUserId");
 
                     b.ToTable("LoanHistories");
                 });
 
-            modelBuilder.Entity("BookStore.Infrastructure.Entities.UserEntity", b =>
+            modelBuilder.Entity("BookStore.Infrastructure.Entities.DomainUserEntity", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("DomainUserId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DomainUserId"), 1L, 1);
 
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
@@ -142,9 +142,9 @@ namespace BookStore.Infrastructure.Migrations
                     b.Property<DateTime>("UpdatedTime")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("UserId");
+                    b.HasKey("DomainUserId");
 
-                    b.ToTable("Users");
+                    b.ToTable("DomainUsers");
                 });
 
             modelBuilder.Entity("BookStore.Infrastructure.Entities.LoanEntity", b =>
@@ -155,15 +155,15 @@ namespace BookStore.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BookStore.Infrastructure.Entities.UserEntity", "User")
+                    b.HasOne("BookStore.Infrastructure.Entities.DomainUserEntity", "DomainUser")
                         .WithMany("Loans")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("DomainUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Book");
 
-                    b.Navigation("User");
+                    b.Navigation("DomainUser");
                 });
 
             modelBuilder.Entity("BookStore.Infrastructure.Entities.LoanHistoryEntity", b =>
@@ -174,15 +174,15 @@ namespace BookStore.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BookStore.Infrastructure.Entities.UserEntity", "User")
+                    b.HasOne("BookStore.Infrastructure.Entities.DomainUserEntity", "DomainUser")
                         .WithMany("LoanHistories")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("DomainUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Book");
 
-                    b.Navigation("User");
+                    b.Navigation("DomainUser");
                 });
 
             modelBuilder.Entity("BookStore.Infrastructure.Entities.BookEntity", b =>
@@ -192,7 +192,7 @@ namespace BookStore.Infrastructure.Migrations
                     b.Navigation("Loans");
                 });
 
-            modelBuilder.Entity("BookStore.Infrastructure.Entities.UserEntity", b =>
+            modelBuilder.Entity("BookStore.Infrastructure.Entities.DomainUserEntity", b =>
                 {
                     b.Navigation("LoanHistories");
 

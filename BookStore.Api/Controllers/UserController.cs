@@ -117,7 +117,7 @@ namespace BookStoreApi.Controllers
             //add fluent validation 
             _logger.LogInformation("Creating user");
 
-            var user = createUserRequestModel.Adapt<CreateUser>();
+            var user = createUserRequestModel.Adapt<DomainUser>();
 
             var createResponse = await _userHandler.CreateUser(user, cancellationToken);
             switch (createResponse)

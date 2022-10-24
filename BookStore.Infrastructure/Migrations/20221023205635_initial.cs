@@ -26,10 +26,10 @@ namespace BookStore.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "DomainUsers",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "int", nullable: false)
+                    DomainUserId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -41,7 +41,7 @@ namespace BookStore.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.UserId);
+                    table.PrimaryKey("PK_DomainUsers", x => x.DomainUserId);
                 });
 
             migrationBuilder.CreateTable(
@@ -51,7 +51,7 @@ namespace BookStore.Infrastructure.Migrations
                     LoanHistoryId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BookId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    DomainUserId = table.Column<int>(type: "int", nullable: false),
                     RentedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ReturnedTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -65,10 +65,10 @@ namespace BookStore.Infrastructure.Migrations
                         principalColumn: "BookId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_LoanHistories_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
+                        name: "FK_LoanHistories_DomainUsers_DomainUserId",
+                        column: x => x.DomainUserId,
+                        principalTable: "DomainUsers",
+                        principalColumn: "DomainUserId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -79,7 +79,7 @@ namespace BookStore.Infrastructure.Migrations
                     LoanId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BookId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    DomainUserId = table.Column<int>(type: "int", nullable: false),
                     RentedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DueDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -93,10 +93,10 @@ namespace BookStore.Infrastructure.Migrations
                         principalColumn: "BookId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Loans_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
+                        name: "FK_Loans_DomainUsers_DomainUserId",
+                        column: x => x.DomainUserId,
+                        principalTable: "DomainUsers",
+                        principalColumn: "DomainUserId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -106,9 +106,9 @@ namespace BookStore.Infrastructure.Migrations
                 column: "BookId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LoanHistories_UserId",
+                name: "IX_LoanHistories_DomainUserId",
                 table: "LoanHistories",
-                column: "UserId");
+                column: "DomainUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Loans_BookId",
@@ -116,9 +116,9 @@ namespace BookStore.Infrastructure.Migrations
                 column: "BookId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Loans_UserId",
+                name: "IX_Loans_DomainUserId",
                 table: "Loans",
-                column: "UserId");
+                column: "DomainUserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -133,7 +133,7 @@ namespace BookStore.Infrastructure.Migrations
                 name: "Books");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "DomainUsers");
         }
     }
 }
