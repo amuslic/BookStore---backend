@@ -3,7 +3,9 @@ using BookStore.Contracts.Models;
 using BookStore.Contracts.User;
 using BookStore.Domain;
 using BookStore.Domain.User;
+using BookStore.Infrastructure.Entities;
 using Mapster;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using NSwag.Annotations;
 using System.Net;
@@ -153,14 +155,15 @@ namespace BookStoreApi.Controllers
         //[SwaggerResponse(HttpStatusCode.Created, typeof(ShippingAdvanceShippingNoticeResponseModel), Description = "The advance shipping notice was created.")]
         //[SwaggerResponse(HttpStatusCode.BadRequest, typeof(ErrorResponseModel), Description = "Site name is invalid")]
         public async Task<ActionResult> UpdateUser(
-        UserUpdateRequestModel userUpdateRequestModel,
+        string userId,
+        [FromBody] JsonPatchDocument<UserUpdateRequestModel> patchDocument,
         CancellationToken cancellationToken)
         {
             _logger.LogInformation("Updating User");
 
-            var updateUser = userUpdateRequestModel.Adapt<UpdateUser>();
+            var updateUserModel = patchDocument.Adapt<JsonPatchDocument<UpdateUserModel>>();
 
-            var updateResponse = await _userHandler.UpdateUser(updateUser, cancellationToken);
+            var updateResponse = await _userHandler.UpdateUser(userId, updateUserModel, cancellationToken);
 
             switch (updateResponse)
             {

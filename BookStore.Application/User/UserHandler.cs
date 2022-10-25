@@ -1,5 +1,6 @@
 ﻿using BookStore.Domain;
 using BookStore.Domain.User;
+using Microsoft.AspNetCore.JsonPatch;
 using static BookStore.Domain.IOperationResponse;
 
 namespace BookStore.Application.User
@@ -28,9 +29,9 @@ namespace BookStore.Application.User
         {
             return _userRepository.CreateUser(createUser, cancellationToken);
         }
-        public Task<OperationResult> UpdateUser(UpdateUser updateUser, CancellationToken cancellationToken)
+        public Task<OperationResult> UpdateUser(string userId, JsonPatchDocument<UpdateUserModel> patchDocument, CancellationToken cancellationToken)
         {
-            return _userRepository.UpdateUser(updateUser, cancellationToken);
+            return _userRepository.UpdateUser(userId, patchDocument, cancellationToken);
         }
 
         public Task<OperationResult> DeleteUser(string userId, CancellationToken cancellationToken)

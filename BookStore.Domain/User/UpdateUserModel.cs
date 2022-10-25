@@ -2,7 +2,7 @@
 
 namespace BookStore.Domain.User
 {
-    public class UpdateUser
+    public class UpdateUserModel
     {
         [Required]
         public int UserId { get; set; }

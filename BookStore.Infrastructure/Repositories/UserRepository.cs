@@ -3,6 +3,7 @@ using BookStore.Domain;
 using BookStore.Domain.User;
 using BookStore.Infrastructure.Entities;
 using Mapster;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using static BookStore.Domain.IOperationResponse;
@@ -72,6 +73,7 @@ namespace BookStore.Infrastructure
                 _context.SaveChanges();
                 return OperationResult.Succeeded;
             }
+
             catch (Exception exception)
             {
                 _logger.LogError(exception, "Error on permission listing");
@@ -79,30 +81,32 @@ namespace BookStore.Infrastructure
             }
         }
 
-        public async Task<OperationResult> UpdateUser(UpdateUser updateUser, CancellationToken cancellationToken)
+        public async Task<OperationResult> UpdateUser(string userId, JsonPatchDocument<UpdateUserModel> patchDocument, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
-            //_logger.LogInformation("Updating user with id {userId}", updateUser.UserId);
-            //try
-            //{
-            //    var user = await _context.Users.Update(new object?[] { updateUser.UserId }, cancellationToken);
+            _logger.LogInformation("Updating user with id {userId}", userId);
+            
+            try
+            {
+                var user = await _context.Users.FindAsync(new object?[] { userId }, cancellationToken);
 
-            //    if (user == null)
-            //    {
-            //        _logger.LogInformation("User with id {userId} not Found", updateUser.UserId);
-            //        return OperationResult.NotFound;
-            //    }
+                if (user == null)
+                {
+                    _logger.LogInformation("User with id {userId} not Found", userId);
+                    return OperationResult.NotFound;
+                }
 
-            //    _context.Users.Remove(user);
+                var entityPatchDocument = patchDocument.Adapt<JsonPatchDocument<UserEntity>>();
+                entityPatchDocument.ApplyTo(user);
+                _context.SaveChanges();
 
-            //    return OperationResult.Succeeded;
-            //}
+                return OperationResult.Succeeded;
+            }
 
-            //catch (Exception exception)
-            //{
-            //    _logger.LogError(exception, "Error while fetching the user");
-            //    return OperationResult.UnknownError;
-            //}
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Error while updating the user");
+                return OperationResult.UnknownError;
+            }
         }
 
         public async Task<OperationResult> DeleteUser(string userId, CancellationToken cancellationToken)
@@ -119,6 +123,7 @@ namespace BookStore.Infrastructure
                 }
 
                 _context.Users.Remove(user);
+                _context.SaveChanges();
 
                 return OperationResult.Succeeded;
             }
