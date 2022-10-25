@@ -59,7 +59,7 @@ namespace BookStore.Infrastructure
             }
             catch (Exception exception)
             {
-                _logger.LogError(exception, "Error on permission listing");
+                _logger.LogError(exception, "Error while fetching users");
                 return OperationResponse.Error<IReadOnlyList<UserModel>>(OperationResult.UnknownError);
             }
         }
@@ -76,7 +76,7 @@ namespace BookStore.Infrastructure
 
             catch (Exception exception)
             {
-                _logger.LogError(exception, "Error on permission listing");
+                _logger.LogError(exception, "Error while creating the sure");
                 return OperationResult.UnknownError;
             }
         }

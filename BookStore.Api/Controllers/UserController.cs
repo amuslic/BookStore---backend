@@ -3,13 +3,12 @@ using BookStore.Contracts.Models;
 using BookStore.Contracts.User;
 using BookStore.Domain;
 using BookStore.Domain.User;
-using BookStore.Infrastructure.Entities;
 using Mapster;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using NSwag.Annotations;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Net;
-using static BookStoreApi.Models.ErrorResponse;
 
 namespace BookStoreApi.Controllers
 {
@@ -20,9 +19,9 @@ namespace BookStoreApi.Controllers
     /// <summary>
     /// 
     /// </summary>
+    [Route("bookstore/api/")]
     [ApiController]
     [ApiVersion("1.0")]
-    [OpenApiTag("BookStore User API")]
     public class UserController : ControllerBase
     {
         private readonly ILogger<UserController> _logger;
@@ -43,9 +42,9 @@ namespace BookStoreApi.Controllers
         /// <param name="cancellationToken"></param>
         /// <returns>List of user</returns>
         [HttpGet]
-        [Route("bookstore/api/v{version:apiVersion}/users")]
-        [SwaggerResponse(HttpStatusCode.OK, typeof(UserResponseModel), Description = "The user")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, typeof(ErrorResponseModel), Description = "Unknown error while trying to retrieve users")]
+        [Route("v{version:apiVersion}/users")]
+        [ProducesResponseType(200, Type = typeof(UserModel))]
+        [ProducesResponseType(500)]
         public async Task<ActionResult> GetUsers(
             CancellationToken cancellationToken,
             int count = 100)
@@ -76,10 +75,10 @@ namespace BookStoreApi.Controllers
         /// <param name="cancellationToken"></param>
         /// <returns>User</returns>
         [HttpGet]
-        [Route("bookstore/api/v{version:apiVersion}/users/{userId}")]
-        [SwaggerResponse(HttpStatusCode.OK, typeof(UserResponseModel), Description = "The user")]
-        [SwaggerResponse(HttpStatusCode.NotFound, typeof(ErrorResponseModel), Description = "User with provided id was not found")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, typeof(ErrorResponseModel), Description = "Uknown error while trying to fetch users")]
+        [Route("v{version:apiVersion}/users/{userId}")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<UserModel>))]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         public async Task<ActionResult> GetUser(
             int userId,
             CancellationToken cancellationToken)
@@ -106,17 +105,17 @@ namespace BookStoreApi.Controllers
             }
         }
 
+
         /// <summary>
-        /// Create new user
+        /// Create a new user
         /// </summary>
-        /// <param name="createUserRequestModel"></param>
+        /// <param name="createUserRequestModel">User properties of the user we want to create</param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("bookstore/api/v{version:apiVersion}/users")]
-        [SwaggerResponse(HttpStatusCode.OK, typeof(UserResponseModel), Description = "User was succesfully created")]
-        [SwaggerResponse(HttpStatusCode.BadRequest, typeof(ErrorResponseModel), Description = "Provided information for user creation were incorrect")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, typeof(ErrorResponseModel), Description = "Unknow error while trying to create user")]
+        [Route("v{version:apiVersion}/users")]
+        [ProducesResponseType(200, Type = typeof(UserModel))]
+        [ProducesResponseType(500)]
         public async Task<ActionResult> CreateUser(
             UserCreateRequestModel createUserRequestModel,
             CancellationToken cancellationToken)
@@ -133,10 +132,6 @@ namespace BookStoreApi.Controllers
                         var userModel = user.Adapt<UserResponseModel>();
                         return Ok(userModel);
                     }
-                case OperationResult.NotFound:
-                    {
-                        return BadRequest("User with provided id was not found");
-                    }
                 default:
                     {
                         return Problem("Unknown error while trying to retrieve users", statusCode: (int?)HttpStatusCode.InternalServerError);
@@ -146,15 +141,17 @@ namespace BookStoreApi.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Update user
         /// </summary>
-        /// <param name="userId"></param>
+        /// <param name="userId">Id of the user we want to retrieve</param>
+        /// <param name="patchDocument">Patch operations for fields we want to update</param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPatch]
-        [Route("bookstore/api/v{version:apiVersion}/users/{userId}")]
-        //[SwaggerResponse(HttpStatusCode.Created, typeof(ShippingAdvanceShippingNoticeResponseModel), Description = "The advance shipping notice was created.")]
-        //[SwaggerResponse(HttpStatusCode.BadRequest, typeof(ErrorResponseModel), Description = "Site name is invalid")]
+        [Route("v{version:apiVersion}/users/{userId}")]
+        [ProducesResponseType(200, Type = typeof(UserModel))]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         public async Task<ActionResult> UpdateUser(
         int userId,
         [FromBody] JsonPatchDocument<UserUpdateRequestModel> patchDocument,
@@ -175,7 +172,7 @@ namespace BookStoreApi.Controllers
                     }
                 case OperationResult.NotFound:
                     {
-                        return BadRequest("DomainUser with provided id was not found");
+                        return NotFound("User with provided id was not found");
                     }
                 default:
                     {
@@ -186,16 +183,16 @@ namespace BookStoreApi.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Delete a user
         /// </summary>
-        /// <param name="userId"></param>
+        /// <param name="userId">Id of the user we want to retrieve</param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpDelete]
-        [Route("bookstore/api/v{version:apiVersion}/users/{userId}")]
-        [SwaggerResponse(HttpStatusCode.OK, typeof(UserResponseModel), Description = "User with provided id was deleted")]
-        [SwaggerResponse(HttpStatusCode.NotFound, typeof(ErrorResponseModel), Description = "User with provided id not found")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, typeof(ErrorResponseModel), Description = "Unknown error while trying to delete user")]
+        [Route("v{version:apiVersion}/users/{userId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         public async Task<ActionResult> DeleteUser(
             int userId,
             CancellationToken cancellationToken)
@@ -211,7 +208,7 @@ namespace BookStoreApi.Controllers
                     }
                 case OperationResult.NotFound:
                     {
-                        return BadRequest("User with provided id was not found");
+                        return NotFound("User with provided id was not found");
                     }
                 default:
                     {

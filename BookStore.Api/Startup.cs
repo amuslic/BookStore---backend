@@ -1,18 +1,17 @@
 ﻿using BookStore.Application;
 using BookStore.Infrastructure;
-using BookStoreApi.Processor;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 namespace BookStoreApi
 {
 
     //todo - add cors rules
+
     public class Startup
     {
-        private const string SwaggerTitle = "BookStore";
 
         /// <summary>
         /// </summary>
@@ -32,18 +31,8 @@ namespace BookStoreApi
         /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
-
-            services.AddApiVersioning(options =>
-            {
-                options.AssumeDefaultVersionWhenUnspecified = true;
-                options.ApiVersionReader = new UrlSegmentApiVersionReader();
-            });
-
-            services.AddVersionedApiExplorer(options =>
-            {
-                options.SubstituteApiVersionInUrl = true;
-            });
+            services.AddControllers().AddNewtonsoftJson();
+            services.AddApiVersioning();
 
             services.AddDbContext<ApplicationDbContext>
                (options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -52,16 +41,27 @@ namespace BookStoreApi
 
             services.AddApplication();
             services.AddInfrastructure();
-
-            services.AddOpenApiDocument(doc =>
+            services.AddSwaggerGen(options =>
             {
-                doc.DocumentName = "v1.0";
-                doc.Title = SwaggerTitle;
-                doc.Version = "1.0";
-                doc.ApiGroupNames = new[] { "1.0" };
-                doc.AllowReferencesWithProperties = true;
-                doc.AllowReferencesWithProperties = true;
-                doc.OperationProcessors.Add(new ExternalApiOperationProcessor());
+                options.SwaggerDoc("BookStoreAssignmentOpenAPISpec", new OpenApiInfo
+                {
+                    Version = "v1.0",
+                    Title = "BookStore API",
+                    Description = "An ASP.NET Core Web API for managing BookStore",
+                    Contact = new OpenApiContact()
+                    {
+                        Email = "a.muslic@outlook.com",
+                        Name = "Aneta Muslić"
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = "MIT Licensce",
+                        Url = new Uri("https://en.wikipedia.org/wiki/MIT_License")
+                    },
+                });
+                var xmlCommentFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlCommentsFullPath = Path.Combine(AppContext.BaseDirectory, xmlCommentFile);
+                options.IncludeXmlComments(xmlCommentsFullPath);
             });
         }
 
@@ -70,32 +70,30 @@ namespace BookStoreApi
         /// </summary>
         /// <param name="app"></param>
         /// <param name="env"></param>
-        /// <param name="apiVersionDescriptionProvider"></param>
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider apiVersionDescriptionProvider)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseCors(_allowAll);
-            }
-            else
-            {
-                app.UseCors(_allowSpecifics);
             }
 
             var option = new RewriteOptions();
-            option.AddRedirect("^$", "swagger/index.html");
-            app.UseRewriter(option);
+            //option.AddRedirect("^$", "swagger/index.html");
+            //app.UseRewriter(option);
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
-            app.UseOpenApi();
-
-            app.UseSwaggerUi3();
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+
+
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/BookStoreAssignmentOpenAPISpec/swagger.json", "Sales API");
             });
         }
     }
