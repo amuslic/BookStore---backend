@@ -11,7 +11,7 @@ using static BookStore.Domain.IOperationResponse;
 namespace BookStore.Infrastructure
 {
     // todo - implement caching 
-    // todo - implement retries (polly ) 
+    // todo - implement retries (polly) on certain status codes
     internal class UserRepository : BaseRepository, IUserRepository
     {
         private readonly ILogger<UserRepository> _logger;
@@ -84,7 +84,7 @@ namespace BookStore.Infrastructure
         public async Task<OperationResult> UpdateUser(int userId, JsonPatchDocument<UpdateUserModel> patchDocument, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Updating user with id {userId}", userId);
-            
+
             try
             {
                 var user = await _context.Users.FindAsync(new object?[] { userId }, cancellationToken);

@@ -14,6 +14,8 @@ using static BookStoreApi.Models.ErrorResponse;
 namespace BookStoreApi.Controllers
 {
     //todo - add fluent validation
+    //todo - add exception controller
+
 
     /// <summary>
     /// 

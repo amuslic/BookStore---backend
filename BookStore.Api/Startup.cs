@@ -8,12 +8,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookStoreApi
 {
-    /// <summary>
-    /// </summary>
+
+    //todo - add cors rules
     public class Startup
     {
-        private readonly string _allowAll = "developmentCors";
-        private readonly string _allowSpecifics = "deploymentCors";
         private const string SwaggerTitle = "BookStore";
 
         /// <summary>
@@ -45,24 +43,6 @@ namespace BookStoreApi
             services.AddVersionedApiExplorer(options =>
             {
                 options.SubstituteApiVersionInUrl = true;
-            });
-
-            services.AddCors(options =>
-            {
-                options.AddPolicy(_allowAll,
-                    builder =>
-                    {
-                        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-                    });
-
-                options.AddPolicy(_allowSpecifics,
-                    builder =>
-                    {
-                        builder.WithOrigins("http://localhost:4200")
-                            .SetIsOriginAllowedToAllowWildcardSubdomains()
-                            .AllowAnyMethod()
-                            .AllowAnyHeader();
-                    });
             });
 
             services.AddDbContext<ApplicationDbContext>

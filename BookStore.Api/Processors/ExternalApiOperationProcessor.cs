@@ -7,7 +7,7 @@ namespace BookStoreApi.Processor
     {
         public bool Process(OperationProcessorContext context)
         {
-            return !context.OperationDescription.Path.Contains("/diagnostics/");
+            return true;
         }
     }
 }
