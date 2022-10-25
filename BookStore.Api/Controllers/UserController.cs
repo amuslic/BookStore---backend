@@ -12,7 +12,7 @@ namespace BookStoreApi.Controllers
 {
     //todo - add fluent validation
     //todo - add exception controller
-
+    //todo - routes that accept batch - implement chunking on application layer in that case
 
     /// <summary>
     /// 

@@ -8,6 +8,7 @@ namespace BookStore.Application
         public static void AddApplication(this IServiceCollection services)
         {
             services.AddScoped<IUserHandler, UserHandler>();
+            services.AddScoped<IJsonPatchDocumentValidator, JsonPatchDocumentValidator>();
 
         }
     }

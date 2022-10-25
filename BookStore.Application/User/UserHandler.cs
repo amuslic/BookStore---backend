@@ -11,9 +11,12 @@ namespace BookStore.Application.User
         //done for adding additional logics in the future to cleary separate business and infrascture layers ( should have its own models and responses)
 
         private readonly IUserRepository _userRepository;
-        public UserHandler(IUserRepository userRepository)
+        private readonly IJsonPatchDocumentValidator _jsonPatchDocumentValidator;
+
+        public UserHandler(IUserRepository userRepository, IJsonPatchDocumentValidator jsonPatchDocumentValidator)
         {
             _userRepository = userRepository;
+            _jsonPatchDocumentValidator = jsonPatchDocumentValidator;
         }
         public Task<IOperationResponse<UserModel?>> GetUser(int userId, CancellationToken cancellationToken)
         {
@@ -31,6 +34,11 @@ namespace BookStore.Application.User
         }
         public Task<OperationResult> UpdateUser(int userId, JsonPatchDocument<UpdateUserModel> patchDocument, CancellationToken cancellationToken)
         {
+            var isValid = _jsonPatchDocumentValidator.ValidateJsonPatchDocument(patchDocument);
+            if (!isValid)
+            {
+                return Task.FromResult(OperationResult.ValidationError);
+            }
             return _userRepository.UpdateUser(userId, patchDocument, cancellationToken);
         }
 
