@@ -6,8 +6,6 @@ using BookStore.Domain.User;
 using Mapster;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Net;
 
 namespace BookStoreApi.Controllers
@@ -147,17 +145,33 @@ namespace BookStoreApi.Controllers
         /// <param name="patchDocument">Patch operations for fields we want to update</param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     PATCH 
+        ///       {
+        ///          "path": "/firstName",
+        ///          "op": "replace",
+        ///          "value": "updated first Name"
+        ///       }
+        /// </remarks>
         [HttpPatch]
         [Route("v{version:apiVersion}/users/{userId}")]
         [ProducesResponseType(200, Type = typeof(UserModel))]
+        [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         public async Task<ActionResult> UpdateUser(
-        int userId,
-        [FromBody] JsonPatchDocument<UserUpdateRequestModel> patchDocument,
-        CancellationToken cancellationToken)
+            int userId,
+            [FromBody] JsonPatchDocument<UserUpdateRequestModel> patchDocument,
+            CancellationToken cancellationToken)
         {
             _logger.LogInformation("Updating User");
+
+            if (!patchDocument.Operations.Any())
+            {
+                return BadRequest("Patch operations array cannot be empty");
+            }
 
             var updateUserModel = patchDocument.Adapt<JsonPatchDocument<UpdateUserModel>>();
 
@@ -176,7 +190,7 @@ namespace BookStoreApi.Controllers
                     }
                 default:
                     {
-                        return Problem("Unknown error while trying to retrieve DomainUsers", statusCode: (int?)HttpStatusCode.InternalServerError);
+                        return Problem("Unknown error while trying to update user", statusCode: (int?)HttpStatusCode.InternalServerError);
                     }
 
             }
