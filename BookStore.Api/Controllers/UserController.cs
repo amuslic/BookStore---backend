@@ -1,5 +1,6 @@
 using BookStore.Application.User;
 using BookStore.Contracts.Models;
+using BookStore.Contracts.User;
 using BookStore.Domain;
 using BookStore.Domain.User;
 using Mapster;
@@ -10,6 +11,8 @@ using static BookStoreApi.Models.ErrorResponse;
 
 namespace BookStoreApi.Controllers
 {
+    //todo - add fluent validation
+
     /// <summary>
     /// 
     /// </summary>
@@ -37,7 +40,7 @@ namespace BookStoreApi.Controllers
         /// <returns>List of user</returns>
         [HttpGet]
         [Route("bookstore/api/v{version:apiVersion}/users")]
-        [SwaggerResponse(HttpStatusCode.OK, typeof(UserModel), Description = "The user")]
+        [SwaggerResponse(HttpStatusCode.OK, typeof(UserResponseModel), Description = "The user")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, typeof(ErrorResponseModel), Description = "Unknown error while trying to retrieve users")]
         public async Task<ActionResult> GetUsers(
             CancellationToken cancellationToken,
@@ -51,7 +54,7 @@ namespace BookStoreApi.Controllers
             {
                 case OperationResult.Succeeded:
                     {
-                        var userModels = users.Adapt<IReadOnlyList<UserModel>>();
+                        var userModels = users.Adapt<IReadOnlyList<UserResponseModel>>();
                         return Ok(userModels);
                     }
                 default:
@@ -70,7 +73,7 @@ namespace BookStoreApi.Controllers
         /// <returns>User</returns>
         [HttpGet]
         [Route("bookstore/api/v{version:apiVersion}/users/{userId}")]
-        [SwaggerResponse(HttpStatusCode.OK, typeof(UserModel), Description = "The user")]
+        [SwaggerResponse(HttpStatusCode.OK, typeof(UserResponseModel), Description = "The user")]
         [SwaggerResponse(HttpStatusCode.NotFound, typeof(ErrorResponseModel), Description = "User with provided id was not found")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, typeof(ErrorResponseModel), Description = "Uknown error while trying to fetch users")]
         public async Task<ActionResult> GetUser(
@@ -84,7 +87,7 @@ namespace BookStoreApi.Controllers
             {
                 case OperationResult.Succeeded:
                     {
-                        var userModel = user.Response.Adapt<UserModel>();
+                        var userModel = user.Response.Adapt<UserResponseModel>();
                         return Ok(userModel);
                     }
                 case OperationResult.NotFound:
@@ -107,7 +110,7 @@ namespace BookStoreApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("bookstore/api/v{version:apiVersion}/users")]
-        [SwaggerResponse(HttpStatusCode.Created, typeof(UserModel), Description = "Created user")]
+        [SwaggerResponse(HttpStatusCode.Created, typeof(UserResponseModel), Description = "Created user")]
         [SwaggerResponse(HttpStatusCode.BadRequest, typeof(ErrorResponseModel), Description = "Site name is invalid")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, typeof(ErrorResponseModel), Description = "Unknow error while trying to create user")]
         public async Task<ActionResult> CreateUser(
@@ -117,14 +120,14 @@ namespace BookStoreApi.Controllers
             //add fluent validation 
             _logger.LogInformation("Creating user");
 
-            var user = createUserRequestModel.Adapt<DomainUser>();
+            var user = createUserRequestModel.Adapt<UserModel>();
 
             var createResponse = await _userHandler.CreateUser(user, cancellationToken);
             switch (createResponse)
             {
                 case OperationResult.Succeeded:
                     {
-                        var userModel = user.Adapt<UserModel>();
+                        var userModel = user.Adapt<UserResponseModel>();
                         return Ok(userModel);
                     }
                 case OperationResult.NotFound:
@@ -150,13 +153,32 @@ namespace BookStoreApi.Controllers
         //[SwaggerResponse(HttpStatusCode.Created, typeof(ShippingAdvanceShippingNoticeResponseModel), Description = "The advance shipping notice was created.")]
         //[SwaggerResponse(HttpStatusCode.BadRequest, typeof(ErrorResponseModel), Description = "Site name is invalid")]
         public async Task<ActionResult> UpdateUser(
-        string userId,
+        UserUpdateRequestModel userUpdateRequestModel,
         CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Creating user");
+            _logger.LogInformation("Updating User");
 
-            await _userHandler.DeleteUser(userId, cancellationToken);
-            return Ok();
+            var updateUser = userUpdateRequestModel.Adapt<UpdateUser>();
+
+            var updateResponse = await _userHandler.UpdateUser(updateUser, cancellationToken);
+
+            switch (updateResponse)
+            {
+                case OperationResult.Succeeded:
+                    {
+
+                        return Ok();
+                    }
+                case OperationResult.NotFound:
+                    {
+                        return BadRequest("DomainUser with provided id was not found");
+                    }
+                default:
+                    {
+                        return Problem("Unknown error while trying to retrieve DomainUsers", statusCode: (int?)HttpStatusCode.InternalServerError);
+                    }
+
+            }
         }
 
         /// <summary>
@@ -167,7 +189,7 @@ namespace BookStoreApi.Controllers
         /// <returns></returns>
         [HttpDelete]
         [Route("bookstore/api/v{version:apiVersion}/users/{userId}")]
-        [SwaggerResponse(HttpStatusCode.OK, typeof(UserModel), Description = "The advance shipping notice was created.")]
+        [SwaggerResponse(HttpStatusCode.OK, typeof(UserResponseModel), Description = "The advance shipping notice was created.")]
         [SwaggerResponse(HttpStatusCode.NotFound, typeof(ErrorResponseModel), Description = "User with provided id not found")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, typeof(ErrorResponseModel), Description = "Unknown error while trying to delete user")]
         public async Task<ActionResult> DeleteUser(

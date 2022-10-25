@@ -14,23 +14,23 @@ namespace BookStore.Application.User
         {
             _userRepository = userRepository;
         }
-        public Task<IOperationResponse<DomainUser?>> GetUser(int userId, CancellationToken cancellationToken)
+        public Task<IOperationResponse<UserModel?>> GetUser(int userId, CancellationToken cancellationToken)
         {
             return _userRepository.GetUser(userId, cancellationToken);
         }
 
-        public Task<IOperationResponse<IEnumerable<DomainUser>>> GetUsers(int count, CancellationToken cancellationToken)
+        public Task<IOperationResponse<IEnumerable<UserModel>>> GetUsers(int count, CancellationToken cancellationToken)
         {
             return _userRepository.GetUsers(count, cancellationToken);
         }
 
-        public Task<OperationResult> CreateUser(DomainUser createUser, CancellationToken cancellationToken)
+        public Task<OperationResult> CreateUser(UserModel createUser, CancellationToken cancellationToken)
         {
             return _userRepository.CreateUser(createUser, cancellationToken);
         }
-        public Task<OperationResult> UpdateUser(CancellationToken cancellationToken)
+        public Task<OperationResult> UpdateUser(UpdateUser updateUser, CancellationToken cancellationToken)
         {
-            return _userRepository.UpdateUser(cancellationToken);
+            return _userRepository.UpdateUser(updateUser, cancellationToken);
         }
 
         public Task<OperationResult> DeleteUser(string userId, CancellationToken cancellationToken)

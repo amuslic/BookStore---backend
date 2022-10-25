@@ -10,6 +10,7 @@ using static BookStore.Domain.IOperationResponse;
 namespace BookStore.Infrastructure
 {
     // todo - implement caching 
+    // todo - implement retries (polly ) 
     internal class UserRepository : BaseRepository, IUserRepository
     {
         private readonly ILogger<UserRepository> _logger;
@@ -19,7 +20,7 @@ namespace BookStore.Infrastructure
             _logger = logger;
         }
 
-        public async Task<IOperationResponse<DomainUser?>> GetUser(int userId, CancellationToken cancellationToken)
+        public async Task<IOperationResponse<UserModel?>> GetUser(int userId, CancellationToken cancellationToken)
         {
 
             _logger.LogInformation("Fetching user with id {userId}", userId);
@@ -30,39 +31,39 @@ namespace BookStore.Infrastructure
                 if (user == null)
                 {
                     _logger.LogInformation("User with id {userId} not Found", userId);
-                    return OperationResponse.Error<DomainUser>(OperationResult.NotFound);
+                    return OperationResponse.Error<UserModel>(OperationResult.NotFound);
                 }
 
-                return OperationResponse.Success(user.Adapt<DomainUser>());
+                return OperationResponse.Success(user.Adapt<UserModel>());
             }
 
             catch (Exception exception)
             {
                 _logger.LogError(exception, "Error while fetching the user");
-                return OperationResponse.Error<DomainUser>(OperationResult.UnknownError);
+                return OperationResponse.Error<UserModel>(OperationResult.UnknownError);
             }
         }
 
-        public async Task<IOperationResponse<IEnumerable<DomainUser>>?> GetUsers(int count, CancellationToken cancellationToken)
+        public async Task<IOperationResponse<IEnumerable<UserModel>>?> GetUsers(int count, CancellationToken cancellationToken)
         {
             try
             {
                 var users = await _context.Users.Take(count)
-                    .ProjectToType<DomainUser>()
+                    .ProjectToType<UserModel>()
                     .ToListAsync(cancellationToken: cancellationToken);
 
                 _logger.LogInformation("Returning {Count} users", users.Count);
 
-                return OperationResponse.Success<IReadOnlyList<DomainUser>>(users);
+                return OperationResponse.Success<IReadOnlyList<UserModel>>(users);
             }
             catch (Exception exception)
             {
                 _logger.LogError(exception, "Error on permission listing");
-                return OperationResponse.Error<IReadOnlyList<DomainUser>>(OperationResult.UnknownError);
+                return OperationResponse.Error<IReadOnlyList<UserModel>>(OperationResult.UnknownError);
             }
         }
 
-        public async Task<OperationResult> CreateUser(DomainUser createUser, CancellationToken cancellationToken)
+        public async Task<OperationResult> CreateUser(UserModel createUser, CancellationToken cancellationToken)
         {
             try
             {
@@ -78,9 +79,30 @@ namespace BookStore.Infrastructure
             }
         }
 
-        public Task<OperationResult> UpdateUser(CancellationToken cancellationToken)
+        public async Task<OperationResult> UpdateUser(UpdateUser updateUser, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
+            //_logger.LogInformation("Updating user with id {userId}", updateUser.UserId);
+            //try
+            //{
+            //    var user = await _context.Users.Update(new object?[] { updateUser.UserId }, cancellationToken);
+
+            //    if (user == null)
+            //    {
+            //        _logger.LogInformation("User with id {userId} not Found", updateUser.UserId);
+            //        return OperationResult.NotFound;
+            //    }
+
+            //    _context.Users.Remove(user);
+
+            //    return OperationResult.Succeeded;
+            //}
+
+            //catch (Exception exception)
+            //{
+            //    _logger.LogError(exception, "Error while fetching the user");
+            //    return OperationResult.UnknownError;
+            //}
         }
 
         public async Task<OperationResult> DeleteUser(string userId, CancellationToken cancellationToken)

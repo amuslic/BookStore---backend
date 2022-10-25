@@ -1,6 +1,6 @@
 ﻿namespace BookStore.Contracts.Models
 {
-    public class UserModel
+    public class UserResponseModel
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

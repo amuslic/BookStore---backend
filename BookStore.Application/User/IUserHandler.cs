@@ -6,10 +6,10 @@ namespace BookStore.Application.User
 {
     public interface IUserHandler
     {
-        Task<IOperationResponse<DomainUser?>> GetUser(int userId, CancellationToken cancellationToken);
-        Task<IOperationResponse<IEnumerable<DomainUser>>?> GetUsers(int count, CancellationToken cancellationToken);
-        Task<OperationResult> CreateUser(DomainUser createUser, CancellationToken cancellationToken);
-        Task<OperationResult> UpdateUser(CancellationToken cancellationToken);
+        Task<IOperationResponse<UserModel?>> GetUser(int userId, CancellationToken cancellationToken);
+        Task<IOperationResponse<IEnumerable<UserModel>>?> GetUsers(int count, CancellationToken cancellationToken);
+        Task<OperationResult> CreateUser(UserModel createUser, CancellationToken cancellationToken);
+        Task<OperationResult> UpdateUser(UpdateUser updateUser, CancellationToken cancellationToken);
         Task<OperationResult> DeleteUser(string userId, CancellationToken cancellationToken);       
     }
 }

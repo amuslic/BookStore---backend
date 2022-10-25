@@ -2,7 +2,7 @@
 
 namespace BookStore.Domain.User
 {
-    public class DomainUser
+    public class UserModel
     {
         [Required]
         public string FirstName { get; set; } = string.Empty;
