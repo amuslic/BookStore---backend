@@ -81,7 +81,7 @@ namespace BookStore.Infrastructure
             }
         }
 
-        public async Task<OperationResult> UpdateUser(string userId, JsonPatchDocument<UpdateUserModel> patchDocument, CancellationToken cancellationToken)
+        public async Task<OperationResult> UpdateUser(int userId, JsonPatchDocument<UpdateUserModel> patchDocument, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Updating user with id {userId}", userId);
             
@@ -109,7 +109,7 @@ namespace BookStore.Infrastructure
             }
         }
 
-        public async Task<OperationResult> DeleteUser(string userId, CancellationToken cancellationToken)
+        public async Task<OperationResult> DeleteUser(int userId, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Deleting user with id {userId}", userId);
             try

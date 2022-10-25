@@ -10,7 +10,7 @@ namespace BookStore.Application.User
         Task<IOperationResponse<UserModel?>> GetUser(int userId, CancellationToken cancellationToken);
         Task<IOperationResponse<IEnumerable<UserModel>>?> GetUsers(int count, CancellationToken cancellationToken);
         Task<OperationResult> CreateUser(UserModel createUser, CancellationToken cancellationToken);
-        Task<OperationResult> UpdateUser(string userId, JsonPatchDocument<UpdateUserModel> patchDocument, CancellationToken cancellationToken);
-        Task<OperationResult> DeleteUser(string userId, CancellationToken cancellationToken);       
+        Task<OperationResult> UpdateUser(int userId, JsonPatchDocument<UpdateUserModel> patchDocument, CancellationToken cancellationToken);
+        Task<OperationResult> DeleteUser(int userId, CancellationToken cancellationToken);       
     }
 }

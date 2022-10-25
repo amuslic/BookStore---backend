@@ -29,12 +29,12 @@ namespace BookStore.Application.User
         {
             return _userRepository.CreateUser(createUser, cancellationToken);
         }
-        public Task<OperationResult> UpdateUser(string userId, JsonPatchDocument<UpdateUserModel> patchDocument, CancellationToken cancellationToken)
+        public Task<OperationResult> UpdateUser(int userId, JsonPatchDocument<UpdateUserModel> patchDocument, CancellationToken cancellationToken)
         {
             return _userRepository.UpdateUser(userId, patchDocument, cancellationToken);
         }
 
-        public Task<OperationResult> DeleteUser(string userId, CancellationToken cancellationToken)
+        public Task<OperationResult> DeleteUser(int userId, CancellationToken cancellationToken)
         {
             return _userRepository.DeleteUser(userId, cancellationToken);
         }

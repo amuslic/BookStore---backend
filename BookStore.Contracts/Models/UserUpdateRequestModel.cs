@@ -2,6 +2,7 @@
 
 namespace BookStore.Contracts.User
 {
+    //todo - add email validation
     public class UserUpdateRequestModel
     {
         public string? FirstName { get; set; }

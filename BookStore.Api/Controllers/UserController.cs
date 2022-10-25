@@ -56,7 +56,7 @@ namespace BookStoreApi.Controllers
             {
                 case OperationResult.Succeeded:
                     {
-                        var userModels = users.Adapt<IReadOnlyList<UserResponseModel>>();
+                        var userModels = users.Response.Adapt<IReadOnlyList<UserResponseModel>>();
                         return Ok(userModels);
                     }
                 default:
@@ -112,14 +112,13 @@ namespace BookStoreApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("bookstore/api/v{version:apiVersion}/users")]
-        [SwaggerResponse(HttpStatusCode.Created, typeof(UserResponseModel), Description = "Created user")]
-        [SwaggerResponse(HttpStatusCode.BadRequest, typeof(ErrorResponseModel), Description = "Site name is invalid")]
+        [SwaggerResponse(HttpStatusCode.OK, typeof(UserResponseModel), Description = "User was succesfully created")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, typeof(ErrorResponseModel), Description = "Provided information for user creation were incorrect")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, typeof(ErrorResponseModel), Description = "Unknow error while trying to create user")]
         public async Task<ActionResult> CreateUser(
             UserCreateRequestModel createUserRequestModel,
             CancellationToken cancellationToken)
         {
-            //add fluent validation 
             _logger.LogInformation("Creating user");
 
             var user = createUserRequestModel.Adapt<UserModel>();
@@ -155,7 +154,7 @@ namespace BookStoreApi.Controllers
         //[SwaggerResponse(HttpStatusCode.Created, typeof(ShippingAdvanceShippingNoticeResponseModel), Description = "The advance shipping notice was created.")]
         //[SwaggerResponse(HttpStatusCode.BadRequest, typeof(ErrorResponseModel), Description = "Site name is invalid")]
         public async Task<ActionResult> UpdateUser(
-        string userId,
+        int userId,
         [FromBody] JsonPatchDocument<UserUpdateRequestModel> patchDocument,
         CancellationToken cancellationToken)
         {
@@ -192,11 +191,11 @@ namespace BookStoreApi.Controllers
         /// <returns></returns>
         [HttpDelete]
         [Route("bookstore/api/v{version:apiVersion}/users/{userId}")]
-        [SwaggerResponse(HttpStatusCode.OK, typeof(UserResponseModel), Description = "The advance shipping notice was created.")]
+        [SwaggerResponse(HttpStatusCode.OK, typeof(UserResponseModel), Description = "User with provided id was deleted")]
         [SwaggerResponse(HttpStatusCode.NotFound, typeof(ErrorResponseModel), Description = "User with provided id not found")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, typeof(ErrorResponseModel), Description = "Unknown error while trying to delete user")]
         public async Task<ActionResult> DeleteUser(
-            string userId,
+            int userId,
             CancellationToken cancellationToken)
         {
             _logger.LogInformation("Creating user");
