@@ -2,6 +2,7 @@
 {
     //todo - add email validation
     //todo - add max length for strings
+    //todo - add date time validation
 
     public class UpdateUserRequestModel
     {
