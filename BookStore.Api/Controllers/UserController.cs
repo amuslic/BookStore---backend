@@ -122,14 +122,13 @@ namespace BookStoreApi.Controllers
             _logger.LogInformation("Creating user");
 
             var user = createUserRequestModel.Adapt<UserModel>();
-
             var createResponse = await _userHandler.CreateUser(user, cancellationToken);
+
             switch (createResponse)
             {
                 case OperationResult.Succeeded:
                     {
-                        var userModel = user.Adapt<UserResponseModel>();
-                        return Ok(userModel);
+                        return Ok();
                     }
                 default:
                     {
