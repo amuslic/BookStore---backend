@@ -142,8 +142,8 @@ namespace BookStoreApi.Controllers
         /// <summary>
         /// Update user
         /// </summary>
-        /// <param name="userId">Id of the user we want to retrieve</param>
-        /// <param name="patchDocument">Patch operations for fields we want to update</param>
+        /// <param name="userId">Id of the user we want to update</param>
+        /// <param name="patchDocument">Patch operations for user fields we want to update</param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <remarks>
@@ -198,7 +198,7 @@ namespace BookStoreApi.Controllers
         /// <summary>
         /// Delete a user
         /// </summary>
-        /// <param name="userId">Id of the user we want to retrieve</param>
+        /// <param name="userId">Id of the user we want to delete</param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpDelete]
