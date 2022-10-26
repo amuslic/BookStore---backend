@@ -20,6 +20,7 @@ namespace BookStoreApi.Controllers
     [Route("bookstore/api/")]
     [ApiController]
     [ApiVersion("1.0")]
+    [ProducesResponseType(400)]
     public class UserController : ControllerBase
     {
         private readonly ILogger<UserController> _logger;
@@ -115,7 +116,7 @@ namespace BookStoreApi.Controllers
         [ProducesResponseType(200, Type = typeof(UserModel))]
         [ProducesResponseType(500)]
         public async Task<ActionResult> CreateUser(
-            UserCreateRequestModel createUserRequestModel,
+            CreateUserRequestModel createUserRequestModel,
             CancellationToken cancellationToken)
         {
             _logger.LogInformation("Creating user");
@@ -158,12 +159,11 @@ namespace BookStoreApi.Controllers
         [HttpPatch]
         [Route("v{version:apiVersion}/users/{userId}")]
         [ProducesResponseType(200, Type = typeof(UserModel))]
-        [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         public async Task<ActionResult> UpdateUser(
             int userId,
-            [FromBody] JsonPatchDocument<UserUpdateRequestModel> patchDocument,
+            [FromBody] JsonPatchDocument<UpdateUserRequestModel> patchDocument,
             CancellationToken cancellationToken)
         {
             _logger.LogInformation("Updating User");
@@ -181,7 +181,6 @@ namespace BookStoreApi.Controllers
             {
                 case OperationResult.Succeeded:
                     {
-
                         return Ok();
                     }
                 case OperationResult.NotFound:

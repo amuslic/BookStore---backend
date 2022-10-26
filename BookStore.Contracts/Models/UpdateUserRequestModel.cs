@@ -1,9 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace BookStore.Contracts.User
+﻿namespace BookStore.Contracts.User
 {
     //todo - add email validation
-    public class UserUpdateRequestModel
+    //todo - add max length for strings
+
+    public class UpdateUserRequestModel
     {
         public string? FirstName { get; set; }
         public string? LastName { get; set; }

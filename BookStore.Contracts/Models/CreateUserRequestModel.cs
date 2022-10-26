@@ -2,7 +2,10 @@
 
 namespace BookStore.Contracts.Models
 {
-    public class UserCreateRequestModel
+    //todo - add email validation
+    //todo - add max length for strings
+
+    public class CreateUserRequestModel
     {
         [Required]
         public string FirstName { get; set; } = string.Empty;

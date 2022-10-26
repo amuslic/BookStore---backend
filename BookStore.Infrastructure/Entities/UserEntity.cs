@@ -12,8 +12,8 @@ namespace BookStore.Infrastructure.Entities
         public string EmailAdress { get; set; }
         public string PhoneNumber { get; set; }
         public DateTime DateOfBirth { get; set; }
-        public DateTime UpdatedTime { get; set; }
-        public DateTime CreatedTime { get; set; }
+        public DateTime UpdatedTime { get; set; } = DateTime.Now;
+        public DateTime CreatedTime { get; set; } = DateTime.Now;
         public IEnumerable<LoanEntity> Loans { get; set; }
         public IEnumerable<LoanHistoryEntity> LoanHistories { get; set; }
     }
